@@ -37,9 +37,9 @@ Vagrant.configure("2") do |config|
   end
 
   # Control Plane Node
-  config.vm.define "cp", primary: true do |control|
+  config.vm.define "cp00", primary: true do |control|
     control.vm.hostname = "cp-node"
-    config.vm.network "private_network", type: "dhcp"
+    control.vm.network "private_network", type: "dhcp"
 
     # Shared folders configuration
     if settings["shared_folders"]
@@ -121,6 +121,14 @@ Vagrant.configure("2") do |config|
       vb.vmx["numvcpus"] = settings["nodes"]["ps"]["cpu"]
     end
 
+    ps.vm.provision "shell",
+      env: {
+        "DNS_SERVERS" => settings["network"]["dns_servers"].join(" "),
+        "ENVIRONMENT" => settings["environment"],
+        "OS" => settings["software"]["os"]
+      },
+      path: "scripts/prom-server.sh"
+
   end
 
   config.vm.define "pc", primary: true do |pc|
@@ -138,6 +146,14 @@ Vagrant.configure("2") do |config|
       vb.vmx["memsize"] = settings["nodes"]["pc"]["memory"]
       vb.vmx["numvcpus"] = settings["nodes"]["pc"]["cpu"]
     end
+
+    pc.vm.provision "shell",
+      env: {
+        "DNS_SERVERS" => settings["network"]["dns_servers"].join(" "),
+        "ENVIRONMENT" => settings["environment"],
+        "OS" => settings["software"]["os"]
+      },
+      path: "scripts/client.sh"
 
   end
 end

@@ -37,4 +37,3 @@ printf "\n\033[7;32mPROCESS COMPLETE! GRAFANA SHOULD NOW BE RUNNING AS A SERVICE
 printf '%.0s\n' {1..2}
 printf "\n\033[7;36m ENJOY! \033[0m"
 printf '%.0s\n' {1..2}
-fi

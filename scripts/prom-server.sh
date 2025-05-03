@@ -124,7 +124,3 @@ printf "\n\033[7;36m ENJOY! \033[0m"
 
 printf '%.0s\n' {1..3}
 
-# completion of the if-else statement
-else
-  echo "Installation cancelled."
-fi

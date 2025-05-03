@@ -155,7 +155,7 @@ Vagrant.configure("2") do |config|
         "ENVIRONMENT" => settings["environment"],
         "OS" => settings["software"]["os"]
       },
-      path: "scripts/client.sh"
+      path: "scripts/prom-client.sh"
 
   end
 end

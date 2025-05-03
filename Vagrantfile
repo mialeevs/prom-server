@@ -129,11 +129,13 @@ Vagrant.configure("2") do |config|
       },
       path: "scripts/prom-server.sh"
 
+    ps.vm.provision "shell", path: "scripts/grafana.sh"
+
   end
 
   config.vm.define "pc", primary: true do |pc|
     pc.vm.hostname = "pc-node"
-    config.vm.network "private_network", type: "dhcp"
+    pc.vm.network "private_network", type: "dhcp"
 
     # Shared folders configuration
     if settings["shared_folders"]

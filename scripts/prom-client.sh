@@ -2,9 +2,9 @@
 
 
 # Variables
-NODE_EXPORTER_VERSION=v1.9.1
-NODE_EXPORTER_AMD64=node_exporter-1.9.1.linux-amd64
-NODE_EXPORTER_ARM64=node_exporter-1.9.1.linux-arm64
+NODE_EXPORTER_VERSION=v1.12.1
+NODE_EXPORTER_AMD64=node_exporter-1.12.1.linux-amd64
+NODE_EXPORTER_ARM64=node_exporter-1.12.1.linux-arm64
 UBUNTU_MAN_VERSION=noble
 
 clear -x
@@ -12,10 +12,10 @@ clear -x
 
 # Install node_exporter
 echo
-printf "\n\033[7;32mSTARTING PROMETHEUS NODE_EXPORTER %s INSTALLATION IN 3 SECONDS! \033[0m" "$PROMVERSION"
+printf "\n\033[7;32mSTARTING PROMETHEUS NODE_EXPORTER %s INSTALLATION IN 3 SECONDS! \033[0m" "$NODE_EXPORTER_VERSION"
 echo;sleep 3;echo
 mkdir temp 
-cd temp || return
+cd temp || exit 1
 
 ### Determine CPU architecture using 'uname -m'
 arch=$(uname -m)
@@ -67,7 +67,7 @@ wget https://manpages.ubuntu.com/manpages.gz/$UBUNTU_MAN_VERSION/man1/prometheus
 cp prometheus-node-exporter.1.gz /usr/share/man/man1
 
 # Clean UP!
-cd .. || return
+cd .. || exit 1
 rm -rf temp/
 sleep 2
 

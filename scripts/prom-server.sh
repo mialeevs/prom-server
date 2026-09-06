@@ -17,12 +17,12 @@
 #########################################
 
 # Variables
-PROMVERSION=v3.2.1
-PROM_AMD64=prometheus-3.2.1.linux-amd64
-PROM_ARM64=prometheus-3.2.1.linux-arm64
+PROMVERSION=v3.14.0
+PROM_AMD64=prometheus-3.14.0.linux-amd64
+PROM_ARM64=prometheus-3.14.0.linux-arm64
 UBUNTU_MAN_VERSION=noble
 
-clear -x
+clear
 
 # Install Prometheus
 echo
@@ -31,7 +31,7 @@ echo;sleep 3;echo
 ## Create system user and directories
 groupadd --system prometheus
 useradd -s /sbin/nologin --system -g prometheus prometheus
-mkdir -p /var/lib/prometheus/metrics2
+mkdir -p /var/lib/prometheus/metrics
 mkdir -p {/etc/prometheus,/usr/share/prometheus/web}
 ## Download, extract, and copy Prometheus files
 ### Determine CPU architecture using 'uname -m'
@@ -77,7 +77,7 @@ User=prometheus
 Group=prometheus
 ExecStart=/usr/bin/prometheus $ARGS \
 --config.file /etc/prometheus/prometheus.yml \
---storage.tsdb.path /var/lib/prometheus/metrics2
+--storage.tsdb.path /var/lib/prometheus/metrics
 ExecReload=/bin/kill -HUP $MAINPID
 TimeoutStopSec=20s
 SendSIGKILL=no
@@ -99,13 +99,13 @@ wget https://manpages.ubuntu.com/manpages.gz/$UBUNTU_MAN_VERSION/man1/promtool.1
 cp promtool.1.gz /usr/share/man/man1
 
 # Clean UP!
-cd ..
+cd .. || exit 1
 rm -rf temp/
 ## exec new bash for users
 sleep 2
 
 # Completion messages
-clear -x; echo; echo
+clear; echo; echo
 printf "If the Prometheus version is listed below, then it is installed correctly."
 printf '%.0s\n' {1..2}
 prometheus --version

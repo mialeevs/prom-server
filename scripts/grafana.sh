@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euxo pipefail
+
 #########################################
 
 
@@ -12,7 +14,7 @@
 #########################################
 
 # sudo check and confirmation
-clear -x
+clear
 
 # Install Grafana
 echo

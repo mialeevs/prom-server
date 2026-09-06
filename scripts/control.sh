@@ -40,8 +40,8 @@ curl https://raw.githubusercontent.com/projectcalico/calico/v${CALICO_VERSION}/m
 
 kubectl apply -f calico.yaml
 
-# Install helm (required for cilium)
-wget https://get.helm.sh/helm-v3.12.1-linux-amd64.tar.gz
+# Install helm
+wget https://get.helm.sh/helm-v4.2.4-linux-amd64.tar.gz
 tar xvf helm-*-linux-amd64.tar.gz
 sudo mv linux-amd64/helm /usr/local/bin
 

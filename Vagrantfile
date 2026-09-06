@@ -4,7 +4,7 @@
 require "yaml"
 require "fileutils"
 
-settings_file = "settings.yaml"
+settings_file = File.join(File.dirname(__FILE__), "settings.yaml")
 unless File.exist?(settings_file)
   raise "Settings file '#{settings_file}' not found!"
 end
@@ -33,13 +33,12 @@ Vagrant.configure("2") do |config|
   config.vm.provider "vmware_desktop" do |vmw|
     vmw.gui = false
     vmw.linked_clone = true
-    vmw.vmx["ethernet0.connectionType"] = "nat"
   end
 
   # Control Plane Node
-  config.vm.define "cp", primary: true do |control|
+  config.vm.define "cp00", primary: true do |control|
     control.vm.hostname = "cp-node"
-    config.vm.network "private_network", type: "dhcp"
+    control.vm.network "private_network", ip: settings["nodes"]["control"]["ip"]
 
     # Shared folders configuration
     if settings["shared_folders"]
@@ -49,8 +48,8 @@ Vagrant.configure("2") do |config|
     end
 
     control.vm.provider "vmware_desktop" do |vb|
-      vb.vmx["memsize"] = settings["nodes"]["control"]["memory"]
-      vb.vmx["numvcpus"] = settings["nodes"]["control"]["cpu"]
+      vb.memory = settings["nodes"]["control"]["memory"]
+      vb.cpus = settings["nodes"]["control"]["cpu"]
     end
 
     control.vm.provision "shell",
@@ -78,7 +77,7 @@ Vagrant.configure("2") do |config|
   (1..NUM_WORKER_NODES).each do |i|
     config.vm.define "dp0#{i}" do |node|
       node.vm.hostname = "dp-node0#{i}"
-      node.vm.network "private_network", type: "dhcp"
+      node.vm.network "private_network", ip: settings["nodes"]["workers"]["ip"].to_s.sub(/(\d+)$/) { ($1.to_i + i - 1).to_s }
 
       if settings["shared_folders"]
         settings["shared_folders"].each do |shared_folder|
@@ -107,7 +106,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "ps", primary: true do |ps|
     ps.vm.hostname = "ps-node"
-    config.vm.network "private_network", type: "dhcp"
+    ps.vm.network "private_network", ip: settings["nodes"]["ps"]["ip"]
 
     # Shared folders configuration
     if settings["shared_folders"]
@@ -121,11 +120,21 @@ Vagrant.configure("2") do |config|
       vb.vmx["numvcpus"] = settings["nodes"]["ps"]["cpu"]
     end
 
+    ps.vm.provision "shell",
+      env: {
+        "DNS_SERVERS" => settings["network"]["dns_servers"].join(" "),
+        "ENVIRONMENT" => settings["environment"],
+        "OS" => settings["software"]["os"]
+      },
+      path: "scripts/prom-server.sh"
+
+    ps.vm.provision "shell", path: "scripts/grafana.sh"
+
   end
 
   config.vm.define "pc", primary: true do |pc|
     pc.vm.hostname = "pc-node"
-    config.vm.network "private_network", type: "dhcp"
+    pc.vm.network "private_network", ip: settings["nodes"]["pc"]["ip"]
 
     # Shared folders configuration
     if settings["shared_folders"]
@@ -138,6 +147,14 @@ Vagrant.configure("2") do |config|
       vb.vmx["memsize"] = settings["nodes"]["pc"]["memory"]
       vb.vmx["numvcpus"] = settings["nodes"]["pc"]["cpu"]
     end
+
+    pc.vm.provision "shell",
+      env: {
+        "DNS_SERVERS" => settings["network"]["dns_servers"].join(" "),
+        "ENVIRONMENT" => settings["environment"],
+        "OS" => settings["software"]["os"]
+      },
+      path: "scripts/prom-client.sh"
 
   end
 end

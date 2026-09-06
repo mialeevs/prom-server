@@ -4,28 +4,31 @@ cluster_name: Prometheus Cluster
 environment: development
 network:
   dns_servers:
-    - 9.9.9.11
     - 1.1.1.1
+    - 9.9.9.9
   pod_cidr: 10.244.0.0/16
   service_cidr: 10.96.0.0/12
 nodes:
   control:
     cpu: 4
     memory: 6144
+    ip: 192.168.100.10
   workers:
     count: 1
     cpu: 2
-    memory: 4096
+    memory: 6144
+    ip: 192.168.100.11
   ps:
     cpu: 4
     memory: 6144
+    ip: 192.168.100.20
   pc:
     cpu: 2
     memory: 4096
+    ip: 192.168.100.21
 software:
   box: bento/ubuntu-24.04
-  calico: 3.28.2
-  dashboard: 
-  kubernetes: v1.31
-  os: xUbuntu_22.04
-  crio: v1.31
+  calico: 3.32.2
+  kubernetes: v1.36.1
+  os: xUbuntu_24.04
+  crio: v1.36
